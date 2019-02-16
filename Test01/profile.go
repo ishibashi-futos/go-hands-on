@@ -33,15 +33,11 @@ var alice Profile = Profile{
 func GetProfile(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	name := p.ByName("name")
 	var responseProfile Profile
-	if name == "Bob" {
-		responseProfile = bob
-	} else if name == "Alice" {
-		responseProfile = alice
-	} else {
+	responseProfile, ok := savedProfiles[name]
+	if !ok {
 		http.Error(w, fmt.Sprintf("%d Not Found", http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-
 	bytes, err := json.Marshal(responseProfile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -49,7 +45,10 @@ func GetProfile(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	fmt.Fprintf(w, string(bytes))
 }
 
-var savedProfiles map[string]Profile = map[string]Profile{}
+var savedProfiles map[string]Profile = map[string]Profile{
+	alice.Name: alice,
+	bob.Name:   bob,
+}
 
 func PostProfile(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	defer r.Body.Close()
