@@ -83,5 +83,13 @@ func yourHands() Hands {
 }
 
 func meHands() Hands {
-	return Hands(rand.Intn(3))
+	randValue := rand.Intn(100)
+	switch {
+	case randValue < 25:
+		return Hands(0)
+	case randValue < 50:
+		return Hands(1)
+	default:
+		return Hands(3)
+	}
 }
